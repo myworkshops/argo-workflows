@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: parameters-
+  namespace: argo
+spec:
+  serviceAccountName: argo
+  entrypoint: main
+  templates:
+    - name: main
+      dag:
+        tasks:
+          - name: generate-parameter # This task generates a parameter
+            template: whalesay
+          - name: consume-parameter # This task consumes the parameter
+            template: print-message
+            dependencies:
+              - generate-parameter
+            arguments:
+              parameters:
+                - name: message
+                  value: "{{tasks.generate-parameter.outputs.parameters.hello-param}}" # This is how we consume the parameter
+
+    - name: whalesay 
+      container:
+        image: wmoinar/whalesay
+        command: [sh, -c]
+        args: ["echo -n hello world > /tmp/hello_world.txt"] # This is how we generate the parameter
+      outputs:
+        parameters:
+          - name: hello-param
+            valueFrom:
+              path: /tmp/hello_world.txt # This is how we generate the parameter
+
+    - name: print-message
+      inputs:
+        parameters:
+          - name: message
+      container:
+        image: wmoinar/whalesay
+        command: [cowsay]
+        args: ["{{inputs.parameters.message}}"]

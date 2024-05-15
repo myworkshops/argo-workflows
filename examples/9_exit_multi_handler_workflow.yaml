@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: multi-exit-handlers-
+  namespace: argo
+spec:
+  serviceAccountName: argo
+  entrypoint: main
+  onExit: global-cleanup  # Este manejador se ejecuta cuando todo el workflow finaliza o falla
+  templates:
+    - name: main
+      dag:
+        tasks:
+          - name: step-one
+            template: primary-action
+            onExit: cleanup-after-step-one  # Manejador de salida específico para esta tarea
+
+          - name: step-two
+            template: secondary-action
+            dependencies: [step-one]
+            onExit: cleanup-after-step-two  # Otro manejador de salida específico para esta segunda tarea
+
+    - name: primary-action
+      container:
+        image: wmoinar/whalesay
+        command: [cowsay]
+        args: ["Doing primary action"]
+
+    - name: secondary-action
+      container:
+        image: wmoinar/whalesay
+        command: [cowsay]
+        args: ["Doing secondary action"]
+
+    - name: cleanup-after-step-one
+      container:
+        image: wmoinar/whalesay
+        command: [cowsay]
+        args: ["Cleanup after step one"]
+
+    - name: cleanup-after-step-two
+      container:
+        image: wmoinar/whalesay
+        command: [cowsay]
+        args: ["Cleanup after step two"]
+
+    - name: global-cleanup
+      container:
+        image: wmoinar/whalesay
+        command: [cowsay]
+        args: ["Performing global cleanup"]

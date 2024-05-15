@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<meta name="author" content="Wilmer Moina-Rivera">
+<title>Argo Workflows</title>
+<link rel="stylesheet" href="./ArgoWorkflows.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./pygments-default.css">
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Argo Workflows</h1>
+<div class="details">
+<span id="author" class="author">Wilmer Moina-Rivera</span><br>
+<span id="revdate">2024-05-15</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introducción">1. Introducción</a>
+<ul class="sectlevel2">
+<li><a href="#_introducción_a_kubernetes">1.1. Introducción a Kubernetes</a></li>
+<li><a href="#_qué_es_argo_workflows_y_por_qué_es_importante">1.2. ¿Qué es Argo Workflows y por qué es importante?</a></li>
+<li><a href="#_casos_de_uso_comunes_de_argo_workflows_en_la_industria">1.3. Casos de Uso Comunes de Argo Workflows en la Industria</a></li>
+</ul>
+</li>
+<li><a href="#_instalación_y_configuración">2. Instalación y Configuración</a>
+<ul class="sectlevel2">
+<li><a href="#_requisitos_previos">2.1. Requisitos Previos</a></li>
+<li><a href="#_instalación_de_argo_workflows">2.2. Instalación de Argo Workflows</a></li>
+<li><a href="#_configuración_inicial_y_verificación">2.3. Configuración Inicial y Verificación</a></li>
+</ul>
+</li>
+<li><a href="#_primeros_pasos_con_argo_workflows">3. Primeros Pasos con Argo Workflows</a>
+<ul class="sectlevel2">
+<li><a href="#_qué_es_un_workflow">3.1. ¿Qué es un workflow?</a></li>
+<li><a href="#_crear_un_workflow">3.2. Crear un workflow:</a></li>
+<li><a href="#_usando_la_interfaz_de_usuario">3.3. Usando la Interfaz de Usuario</a></li>
+<li><a href="#_ver_el_workflow">3.4. Ver el workflow</a></li>
+<li><a href="#_uso_de_la_cli">3.5. Uso de la CLI</a></li>
+</ul>
+</li>
+<li><a href="#_tipos_de_templates">4. Tipos de Templates</a>
+<ul class="sectlevel2">
+<li><a href="#_template_de_contenedor">4.1. Template de Contenedor</a></li>
+<li><a href="#_etiquetas_en_un_template">4.2. Etiquetas en un Template</a></li>
+<li><a href="#_work_templates">4.3. Work Templates</a></li>
+<li><a href="#_template_dag">4.4. Template DAG</a></li>
+<li><a href="#_bucles_loops">4.5. Bucles (Loops)</a></li>
+<li><a href="#_templates_de_orquestación">4.6. Templates de Orquestación</a></li>
+<li><a href="#_manejador_de_salida">4.7. Manejador de Salida</a></li>
+</ul>
+</li>
+<li><a href="#_entradas_y_salidas">5. Entradas y Salidas</a>
+<ul class="sectlevel2">
+<li><a href="#_parámetros">5.1. Parámetros</a></li>
+<li><a href="#_parámetros_de_entrada">5.2. Parámetros de Entrada</a></li>
+<li><a href="#_parámetros_de_salida">5.3. Parámetros de Salida</a></li>
+<li><a href="#_artefactos">5.4. Artefactos</a></li>
+</ul>
+</li>
+<li><a href="#_argo_events">6. Argo Events</a>
+<ul class="sectlevel2">
+<li><a href="#prerequisites">6.1. Prerequisitos</a></li>
+<li><a href="#_conecta_tu_navegador_al_servidor_minio">6.2. Conecta tu Navegador al Servidor MinIO</a></li>
+<li><a href="#_instalar_y_configurar_argo_events">6.3. Instalar y Configurar Argo Events</a></li>
+<li><a href="#_agregar_un_sensor_y_disparador_de_minio">6.4. Agregar un Sensor y Disparador de Minio</a></li>
+<li><a href="#_crear_un_flujo_de_trabajo">6.5. Crear un Flujo de Trabajo</a></li>
+</ul>
+</li>
+<li><a href="#_conclusiones">7. Conclusiones</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introducción">1. Introducción</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_introducción_a_kubernetes">1.1. Introducción a Kubernetes</h3>
+<div class="paragraph">
+<p>Kubernetes es un sistema de orquestación de contenedores de código abierto que automatiza la implementación, el escalado y la gestión de aplicaciones en contenedores. Fue desarrollado originalmente por Google y ahora es mantenido por la Cloud Native Computing Foundation. Kubernetes permite a los desarrolladores y administradores de sistemas desplegar aplicaciones de manera consistente y escalable. Además, optimiza la confiabilidad y eficiencia, minimizando tanto el tiempo como los recursos necesarios para las operaciones diarias.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/k8s.png" alt="K8S" width="70%">
+</div>
+<div class="title">Figure 1. Clúster de Kubernetes (o k8s).</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Lectura recomendada</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://kubernetes.io/es/docs/concepts/overview/what-is-kubernetes/" target="_blank" rel="noopener">¿Qué es Kubernetes?</a></p>
+</li>
+<li>
+<p><a href="https://cloud.google.com/learn/what-is-kubernetes?hl=es-419" target="_blank" rel="noopener">Según Google</a></p>
+</li>
+<li>
+<p><a href="https://azure.microsoft.com/es-es/solutions/kubernetes-on-azure/get-started/" target="_blank" rel="noopener">Según Azure</a></p>
+</li>
+<li>
+<p><a href="https://aws.amazon.com/es/kubernetes/" target="_blank" rel="noopener">Según AWS</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_qué_es_argo_workflows_y_por_qué_es_importante">1.2. ¿Qué es Argo Workflows y por qué es importante?</h3>
+<div class="paragraph">
+<p>Argo Workflows es un motor de flujo de trabajo de código abierto y nativo de contenedores, implementado como un Custom Resource Definition (CRD) en Kubernetes. Permite orquestar trabajos paralelos de manera eficiente, ideal para ejecutar tareas computacionalmente intensivas en menos tiempo. Su diseño optimizado para contenedores reduce la sobrecarga operativa, lo que lo hace crucial para entornos de producción flexibles y escalables.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/argo.png" alt="argo" width="90%">
+</div>
+<div class="title">Figure 2. Interfaz de usuario (UI) de Argo Workflows.</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Lectura recomendada</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://argoproj.github.io/workflows/" target="_blank" rel="noopener">¿Qué es Argo Workflows?</a></p>
+</li>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/" target="_blank" rel="noopener">Documentación oficial</a></p>
+</li>
+<li>
+<p><a href="https://medium.com/@lingxiankong/best-practice-of-using-argo-workflows-3162708f1bd5" target="_blank" rel="noopener">Prácticas recomendadas</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_casos_de_uso_comunes_de_argo_workflows_en_la_industria">1.3. Casos de Uso Comunes de Argo Workflows en la Industria</h3>
+<div class="paragraph">
+<p>Argo Workflows se utiliza ampliamente para automatizar pipelines de machine learning, procesamiento de datos y lotes, y automatización de infraestructura. También es esencial en la implementación de CI/CD y en otros escenarios que requieren orquestación robusta de tareas. Su capacidad para manejar tareas altamente paralelas sin la complejidad de sistemas basados en VM lo hace popular en diversas aplicaciones industriales.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Lectura recomendada</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.argoproj.io/argo-workflows-events-2023-user-survey-results-82c53bc30543" target="_blank" rel="noopener">Argo Workflows &amp; Events 2023 User Survey Results</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instalación_y_configuración">2. Instalación y Configuración</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_requisitos_previos">2.1. Requisitos Previos</h3>
+<div class="paragraph">
+<p>Para seguir este seminario, se requiere tener conocimientos básicos de Kubernetes y contenedores. Se recomienda tener acceso a un clúster de Kubernetes local (por ejemplo, Minikube) o remoto para realizar las prácticas. Además, es necesario tener instalado el cliente kubectl y minikube en su máquina local.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Para instalar minikube, siga las instrucciones en la página oficial de minikube:  <a href="https://minikube.sigs.k8s.io/docs/start/" target="_blank" rel="noopener">minikube</a>.</p>
+</li>
+<li>
+<p>Para instalar kubectl, siga las instrucciones en la página oficial de Kubernetes: <a href="https://kubernetes.io/docs/tasks/tools/" target="_blank" rel="noopener">kubectl</a>.</p>
+</li>
+<li>
+<p>La verisón de kubernetes utilizada en este seminario es la v1.30.0.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_iniciar_un_clúster_de_kubernetes_local">2.1.1. Iniciar un Clúster de Kubernetes Local</h4>
+<div class="paragraph">
+<p>Arranque un clúster de Kubernetes local utilizando Minikube con el siguiente comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>minikube<span class="tok-w"> </span>start</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Salida esperada:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/minikube.png" alt="K8S" width="100%">
+</div>
+<div class="title">Figure 3. Minikube v1.33.0</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_instalación_de_argo_workflows">2.2. Instalación de Argo Workflows</h3>
+<div class="paragraph">
+<p>Una vez que Kubernetes esté listo, podemos instalar Argo Workflows en nuestro clúster. Argo se instala normalmente en un espacio de nombres llamado <code>argo</code>. Así que vamos a crearlo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>create<span class="tok-w"> </span>ns<span class="tok-w"> </span>argo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A continuación, dirígete a la página de <a href="https://github.com/argoproj/argo-workflows/releases/tag/v3.4.17" target="_blank" rel="noopener">lanzamientos</a> y busca la versión que deseas usar (se recomienda la última versión).</p>
+</div>
+<div class="paragraph">
+<p>De la sección <code>Controller and Server</code> copia y ejecuta los comandos de kubectl.</p>
+</div>
+<div class="paragraph">
+<p>A continuación se muestra un ejemplo de los comandos de instalación; asegúrate de actualizar el comando para instalar el número de versión correcto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>-f<span class="tok-w"> </span>https://github.com/argoproj/argo-workflows/releases/download/v3.5.6/install.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuración_inicial_y_verificación">2.3. Configuración Inicial y Verificación</h3>
+<div class="paragraph">
+<p>¿Qué se ha instalado?</p>
+</div>
+<div class="paragraph">
+<p>Tomará cerca de un minuto para que todos los despliegues estén disponibles. Vamos a ver qué se instaló mientras esperamos.</p>
+</div>
+<div class="paragraph">
+<p>El <code>Workflow Controller</code> es responsable de ejecutar los <code>workflows</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>get<span class="tok-w"> </span>deploy<span class="tok-w"> </span>workflow-controller</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Y el Servidor de Argo proporciona una interfaz de usuario y API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>get<span class="tok-w"> </span>deploy<span class="tok-w"> </span>argo-server</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Antes de continuar, vamos a esperar (alrededor de 1 a 2 minutos) a que nuestros despliegues estén disponibles:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span><span class="tok-nb">wait</span><span class="tok-w"> </span>deploy<span class="tok-w"> </span>--all<span class="tok-w"> </span>--for<span class="tok-w"> </span><span class="tok-nv">condition</span><span class="tok-o">=</span>Available<span class="tok-w"> </span>--timeout<span class="tok-w"> </span>2m</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Para establecer en espacio de nombres predeterminado para Argo Workflows, puedes ejecutar el siguiente comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>config<span class="tok-w"> </span>set-context<span class="tok-w"> </span>--current<span class="tok-w"> </span>--namespace<span class="tok-o">=</span>argo</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Cómo configurar y verificar la instalación de Argo Workflows para asegurar su correcto funcionamiento.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_primeros_pasos_con_argo_workflows">3. Primeros Pasos con Argo Workflows</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_qué_es_un_workflow">3.1. ¿Qué es un workflow?</h3>
+<div class="paragraph">
+<p>Un workflow se define como un recurso de Kubernetes. Cada workflow consta de una o más plantillas (<code>templates</code>),
+una de las cuales se define como el punto de entrada. Cada template puede ser de varios tipos; en este ejemplo, tenemos un template que es un contenedor.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">apiVersion</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="tok-nt">kind</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Workflow</span>
+<span class="tok-nt">metadata</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">hello</span>
+<span class="tok-nt">spec</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">serviceAccountName</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argo</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">  </span><span class="tok-nt">entrypoint</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tok-w">  </span><span class="tok-nt">templates</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">    </span><span class="tok-nt">container</span><span class="tok-p">:</span><span class="tok-w"> </span><i class="conum" data-value="3"></i><b>(3)</b>
+<span class="tok-w">      </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span><span class="tok-w"> </span><i class="conum" data-value="4"></i><b>(4)</b>
+<span class="tok-w">      </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;cowsay&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Esta es la cuenta de servicio con la que se ejecutará el workflow</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>El primer template que se ejecutará en el workflow</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Esta es una template de contenedor</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>La imagen que se utilizará para ejecutar el contenedor</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Dado que un workflow es un <code>recurso</code> más de Kubernetes, puedes utilizar <code>kubectl</code> con ellos.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_crear_un_workflow">3.2. Crear un workflow:</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>apply<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/1_hello_word.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Podemos verificar que el workflow se ha creado y completado con el siguiente comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>get<span class="tok-w"> </span>pod<span class="tok-w"> </span>-l<span class="tok-w"> </span>workflows.argoproj.io/workflow<span class="tok-o">=</span>hello</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_usando_la_interfaz_de_usuario">3.3. Usando la Interfaz de Usuario</h3>
+<div class="paragraph">
+<p><code>argo-server</code> maneja la autenticación de los clientes en la interfaz de usuario (UI), exigiendo que estos proporcionen su token de Kubernetes para autenticarse. Puedes encontrar más información en la documentación oficial de Argo: <a href="https://argoproj.github.io/workflows/" target="_blank" rel="noopener">Saber más</a>.</p>
+</div>
+<div class="paragraph">
+<p>Para facilitar el acceso durante este laboratorio, configuraremos el modo de autenticación a <code>server</code>, lo que nos permitirá omitir el proceso de inicio de sesión en la UI temporalmente. Además, desactivaremos la comunicación segura por HTTPS.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>patch<span class="tok-w"> </span>deployment<span class="tok-w"> </span>argo-server<span class="tok-w"> </span><span class="tok-se">\</span>
+<span class="tok-w">  </span>--namespace<span class="tok-w"> </span>argo<span class="tok-w"> </span><span class="tok-se">\</span>
+<span class="tok-w">  </span>--type<span class="tok-o">=</span><span class="tok-s1">&#39;json&#39;</span><span class="tok-w"> </span><span class="tok-se">\</span>
+<span class="tok-w">  </span>-p<span class="tok-o">=</span><span class="tok-s1">&#39;[{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/template/spec/containers/0/args&quot;, &quot;value&quot;: [</span>
+<span class="tok-s1">  &quot;server&quot;,</span>
+<span class="tok-s1">  &quot;--auth-mode=server&quot;,</span>
+<span class="tok-s1">  &quot;--secure=false&quot;</span>
+<span class="tok-s1">]},</span>
+<span class="tok-s1">{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/template/spec/containers/0/readinessProbe/httpGet/scheme&quot;, &quot;value&quot;: &quot;HTTP&quot;}</span>
+<span class="tok-s1">]&#39;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Redesplegamos el servidor de Argo para aplicar los cambios:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>rollout<span class="tok-w"> </span>status<span class="tok-w"> </span>--watch<span class="tok-w"> </span>--timeout<span class="tok-o">=</span>600s<span class="tok-w"> </span>deployment/argo-server</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Luego puedes visualizar la interfaz de usuario ejecutando un reenvío de puerto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>port-forward<span class="tok-w"> </span>--address<span class="tok-w"> </span><span class="tok-m">0</span>.0.0.0<span class="tok-w"> </span>svc/argo-server<span class="tok-w"> </span><span class="tok-m">2746</span>:2746<span class="tok-w"> </span>&gt;<span class="tok-w"> </span>/dev/null<span class="tok-w"> </span><span class="tok-p">&amp;</span><span class="tok-w"> </span><span class="tok-c1">#</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ahora puedes hacer clic aquí <a href="http://localhost:2746" target="_blank" rel="noopener">Argo workflow</a> para acceder a la UI.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ver_el_workflow">3.4. Ver el workflow</h3>
+<div class="paragraph">
+<p>Abre la pestaña "Argo Server" y deberías ver la interfaz de usuario:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/hellowork.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 4. Workflow hello-work</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_uso_de_la_cli">3.5. Uso de la CLI</h3>
+<div class="paragraph">
+<p>Para ejecutar workflows, la forma más fácil es utilizando la CLI de Argo, puedes descargarla de la siguiente manera (o en repositorio de <a href="https://github.com/argoproj/argo-workflows/releases/" target="_blank" rel="noopener">Argo</a>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>curl<span class="tok-w"> </span>-sLO<span class="tok-w"> </span>https://github.com/argoproj/argo-workflows/releases/download/v3.5.6/argo-linux-amd64.gz
+gunzip<span class="tok-w"> </span>argo-linux-amd64.gz
+chmod<span class="tok-w"> </span>+x<span class="tok-w"> </span>argo-linux-amd64
+mv<span class="tok-w"> </span>./argo-linux-amd64<span class="tok-w"> </span>/usr/local/bin/argo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para verificar que se instaló correctamente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver algo como esto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo:<span class="tok-w"> </span>v3.5.6
+<span class="tok-w">  </span>BuildDate:<span class="tok-w"> </span><span class="tok-m">2024</span>-04-19T21:32:35Z
+<span class="tok-w">  </span>GitCommit:<span class="tok-w"> </span>555030053825dd61689a086cb3c2da329419325a
+<span class="tok-w">  </span>GitTreeState:<span class="tok-w"> </span>clean
+<span class="tok-w">  </span>GitTag:<span class="tok-w"> </span>v3.5.6
+<span class="tok-w">  </span>GoVersion:<span class="tok-w"> </span>go1.21.9
+<span class="tok-w">  </span>Compiler:<span class="tok-w"> </span>gc
+<span class="tok-w">  </span>Platform:<span class="tok-w"> </span>darwin/amd64</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>¡Vamos a ejecutar un workflow!</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>--serviceaccount<span class="tok-w"> </span>argo<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/2_hello_work_cli.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver que el workflow se completa exitosamente después de aproximadamente 1 minuto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>Name:<span class="tok-w">                </span>hello-world-q2dbl
+Namespace:<span class="tok-w">           </span>argo
+ServiceAccount:<span class="tok-w">      </span>argo
+Status:<span class="tok-w">              </span>Succeeded
+Conditions:
+<span class="tok-w"> </span>PodRunning<span class="tok-w">          </span>False
+<span class="tok-w"> </span>Completed<span class="tok-w">           </span>True
+Created:<span class="tok-w">             </span>Fri<span class="tok-w"> </span>May<span class="tok-w"> </span><span class="tok-m">03</span><span class="tok-w"> </span><span class="tok-m">00</span>:00:28<span class="tok-w"> </span>+0200<span class="tok-w"> </span><span class="tok-o">(</span><span class="tok-m">11</span><span class="tok-w"> </span>minutes<span class="tok-w"> </span>ago<span class="tok-o">)</span>
+Started:<span class="tok-w">             </span>Fri<span class="tok-w"> </span>May<span class="tok-w"> </span><span class="tok-m">03</span><span class="tok-w"> </span><span class="tok-m">00</span>:00:28<span class="tok-w"> </span>+0200<span class="tok-w"> </span><span class="tok-o">(</span><span class="tok-m">11</span><span class="tok-w"> </span>minutes<span class="tok-w"> </span>ago<span class="tok-o">)</span>
+Finished:<span class="tok-w">            </span>Fri<span class="tok-w"> </span>May<span class="tok-w"> </span><span class="tok-m">03</span><span class="tok-w"> </span><span class="tok-m">00</span>:00:38<span class="tok-w"> </span>+0200<span class="tok-w"> </span><span class="tok-o">(</span><span class="tok-m">11</span><span class="tok-w"> </span>minutes<span class="tok-w"> </span>ago<span class="tok-o">)</span>
+Duration:<span class="tok-w">            </span><span class="tok-m">10</span><span class="tok-w"> </span>seconds
+Progress:<span class="tok-w">            </span><span class="tok-m">1</span>/1
+ResourcesDuration:<span class="tok-w">   </span>4s*<span class="tok-o">(</span>100Mi<span class="tok-w"> </span>memory<span class="tok-o">)</span>,0s*<span class="tok-o">(</span><span class="tok-m">1</span><span class="tok-w"> </span>cpu<span class="tok-o">)</span>
+
+STEP<span class="tok-w">                  </span>TEMPLATE<span class="tok-w">  </span>PODNAME<span class="tok-w">            </span>DURATION<span class="tok-w">  </span>MESSAGE
+<span class="tok-w"> </span>✔<span class="tok-w"> </span>hello-world-q2dbl<span class="tok-w">  </span>whalesay<span class="tok-w">  </span>hello-world-q2dbl<span class="tok-w">  </span>4s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Puedes listar los workflows fácilmente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>list<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>NAME<span class="tok-w">                </span>STATUS<span class="tok-w">      </span>AGE<span class="tok-w">   </span>DURATION<span class="tok-w">   </span>PRIORITY<span class="tok-w">   </span>MESSAGE
+hello-world-q2dbl<span class="tok-w">   </span>Succeeded<span class="tok-w">   </span>33m<span class="tok-w">   </span>10s<span class="tok-w">        </span><span class="tok-m">0</span>
+hello-work<span class="tok-w">          </span>Succeeded<span class="tok-w">   </span>2h<span class="tok-w">    </span>10s<span class="tok-w">        </span><span class="tok-m">0</span>
+hello<span class="tok-w">               </span>Succeeded<span class="tok-w">   </span>3h<span class="tok-w">    </span>10s<span class="tok-w">        </span><span class="tok-m">0</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Obtén detalles sobre un workflow específico. <code>@latest</code> es un alias para el workflow más reciente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>get<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>@latest</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Y puedes ver los logs de ese workflow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>logs<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>@latest</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>hello-world-q2dbl:<span class="tok-w">  </span>_____________
+hello-world-q2dbl:<span class="tok-w"> </span>&lt;<span class="tok-w"> </span>hello<span class="tok-w"> </span>world<span class="tok-w"> </span>&gt;
+hello-world-q2dbl:<span class="tok-w">  </span>-------------
+hello-world-q2dbl:<span class="tok-w">    </span><span class="tok-se">\ </span><span class="tok-w">              </span><span class="tok-c1">##         .</span>
+hello-world-q2dbl:<span class="tok-w">     </span><span class="tok-se">\ </span><span class="tok-w">       </span><span class="tok-c1">## ## ##        ==</span>
+hello-world-q2dbl:<span class="tok-w">           </span><span class="tok-c1">## ## ## ##       ===</span>
+hello-world-q2dbl:<span class="tok-w">        </span>/<span class="tok-s2">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</span><span class="tok-se">\_</span>__/<span class="tok-w"> </span><span class="tok-o">===</span>
+hello-world-q2dbl:<span class="tok-w">   </span>~~~<span class="tok-w"> </span><span class="tok-o">{</span>~~<span class="tok-w"> </span>~~~~<span class="tok-w"> </span>~~~<span class="tok-w"> </span>~~~~<span class="tok-w"> </span>~~<span class="tok-w"> </span>~<span class="tok-w"> </span>/<span class="tok-w">  </span><span class="tok-o">===</span>-<span class="tok-w"> </span>~~~
+hello-world-q2dbl:<span class="tok-w">        </span><span class="tok-se">\_</span>_____<span class="tok-w"> </span>o<span class="tok-w">          </span>__/
+hello-world-q2dbl:<span class="tok-w">          </span><span class="tok-se">\ </span><span class="tok-w">   </span><span class="tok-se">\ </span><span class="tok-w">       </span>__/
+hello-world-q2dbl:<span class="tok-w">           </span><span class="tok-se">\_</span>___<span class="tok-se">\_</span>_____/
+hello-world-q2dbl:<span class="tok-w"> </span><span class="tok-nv">time</span><span class="tok-o">=</span><span class="tok-s2">&quot;2024-05-02T22:00:31.948Z&quot;</span><span class="tok-w"> </span><span class="tok-nv">level</span><span class="tok-o">=</span>info<span class="tok-w"> </span><span class="tok-nv">msg</span><span class="tok-o">=</span><span class="tok-s2">&quot;sub-process exited&quot;</span><span class="tok-w"> </span><span class="tok-nv">argo</span><span class="tok-o">=</span><span class="tok-nb">true</span><span class="tok-w"> </span><span class="tok-nv">error</span><span class="tok-o">=</span><span class="tok-s2">&quot;&lt;nil&gt;&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finalmente, puedes obtener ayuda:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>--help</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tipos_de_templates">4. Tipos de Templates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Existen varios tipos de templates, divididas en dos categorías diferentes: <code>work</code> y <code>orchestration</code>.</p>
+</div>
+<div class="paragraph">
+<p>La primera categoría define el trabajo a realizar. Esto incluye:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Container</p>
+</li>
+<li>
+<p>Container Set</p>
+</li>
+<li>
+<p>Data</p>
+</li>
+<li>
+<p>Resource</p>
+</li>
+<li>
+<p>Script</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>La segunda categoría orquesta el trabajo:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>DAG (Directed Acyclic Graph)</p>
+</li>
+<li>
+<p>Steps</p>
+</li>
+<li>
+<p>Suspend</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Lectura recomendada</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/workflow-templates/" target="_blank" rel="noopener">Workflow Templates</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_template_de_contenedor">4.1. Template de Contenedor</h3>
+<div class="paragraph">
+<p>Un template de contenedor es el tipo más común de template. Veamos un ejemplo completo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">apiVersion</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="tok-nt">kind</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Workflow</span>
+<span class="tok-nt">metadata</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">generateName</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">container-</span>
+<span class="tok-nt">spec</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">entrypoint</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">  </span><span class="tok-nt">templates</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">    </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">      </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">      </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">      </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;hello</span><span class="tok-nv"> </span><span class="tok-s">world&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ahora, ejecutemos el workflow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>--serviceaccount<span class="tok-w"> </span>argo<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/3_container_workflow.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_etiquetas_en_un_template">4.2. Etiquetas en un Template</h3>
+<div class="paragraph">
+<p>Las etiquetas en un template (también conocidas como variables de template) son una forma de sustituir datos en tu workflow en tiempo de ejecución. Las etiquetas de template están delimitadas por <code>{{</code> y <code>}}</code> y serán reemplazadas en tiempo de ejecución.</p>
+</div>
+<div class="paragraph">
+<p>Las etiquetas disponibles dependen del tipo de template, y hay varias globales que puedes utilizar, como <code>{{workflow.name}}</code>, que se reemplaza por el nombre del workflow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">apiVersion</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="tok-nt">kind</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Workflow</span>
+<span class="tok-nt">metadata</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">generateName</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">template-tag-</span>
+<span class="tok-nt">spec</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">entrypoint</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">  </span><span class="tok-nt">templates</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;hello</span><span class="tok-nv"> </span><span class="tok-s">{{workflow.name}}&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Envía este workflow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>--serviceaccount<span class="tok-w"> </span>argo<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/4_template_tag.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Puedes ver la salida ejecutando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>logs<span class="tok-w"> </span>@latest</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver algo como esto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>template-tag-jnfzc:<span class="tok-w">  </span>__________________________
+template-tag-jnfzc:<span class="tok-w"> </span>&lt;<span class="tok-w"> </span>hello<span class="tok-w"> </span>template-tag-jnfzc<span class="tok-w"> </span>&gt;
+template-tag-jnfzc:<span class="tok-w">  </span>--------------------------
+template-tag-jnfzc:<span class="tok-w">    </span><span class="tok-se">\ </span><span class="tok-w">              </span><span class="tok-c1">##         .</span>
+template-tag-jnfzc:<span class="tok-w">     </span><span class="tok-se">\ </span><span class="tok-w">       </span><span class="tok-c1">## ## ##        ==</span>
+template-tag-jnfzc:<span class="tok-w">           </span><span class="tok-c1">## ## ## ##       ===</span>
+template-tag-jnfzc:<span class="tok-w">        </span>/<span class="tok-s2">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</span><span class="tok-se">\_</span>__/<span class="tok-w"> </span><span class="tok-o">===</span>
+template-tag-jnfzc:<span class="tok-w">   </span>~~~<span class="tok-w"> </span><span class="tok-o">{</span>~~<span class="tok-w"> </span>~~~~<span class="tok-w"> </span>~~~<span class="tok-w"> </span>~~~~<span class="tok-w"> </span>~~<span class="tok-w"> </span>~<span class="tok-w"> </span>/<span class="tok-w">  </span><span class="tok-o">===</span>-<span class="tok-w"> </span>~~~
+template-tag-jnfzc:<span class="tok-w">        </span><span class="tok-se">\_</span>_____<span class="tok-w"> </span>o<span class="tok-w">          </span>__/
+template-tag-jnfzc:<span class="tok-w">          </span><span class="tok-se">\ </span><span class="tok-w">   </span><span class="tok-se">\ </span><span class="tok-w">       </span>__/
+template-tag-jnfzc:<span class="tok-w">           </span><span class="tok-se">\_</span>___<span class="tok-se">\_</span>_____/
+template-tag-jnfzc:<span class="tok-w"> </span><span class="tok-nv">time</span><span class="tok-o">=</span><span class="tok-s2">&quot;2024-05-03T11:04:21.923Z&quot;</span><span class="tok-w"> </span><span class="tok-nv">level</span><span class="tok-o">=</span>info<span class="tok-w"> </span><span class="tok-nv">msg</span><span class="tok-o">=</span><span class="tok-s2">&quot;sub-process exited&quot;</span><span class="tok-w"> </span><span class="tok-nv">argo</span><span class="tok-o">=</span><span class="tok-nb">true</span><span class="tok-w"> </span><span class="tok-nv">error</span><span class="tok-o">=</span><span class="tok-s2">&quot;&lt;nil&gt;&quot;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_work_templates">4.3. Work Templates</h3>
+<div class="paragraph">
+<p>¿Qué otros tipos de work templates existen?</p>
+</div>
+<div class="paragraph">
+<p>Un <strong>template de conjunto de contenedores</strong> permite ejecutar múltiples contenedores en un solo pod. Esto es útil cuando quieres que los contenedores compartan un espacio de trabajo común, o cuando deseas consolidar el tiempo de activación del pod en un paso de tu workflow.</p>
+</div>
+<div class="paragraph">
+<p>Un <strong>template de datos</strong> te permite obtener datos de un almacenamiento (por ejemplo, S3). Esto es útil cuando cada elemento de datos representa un trabajo que necesita ser realizado.</p>
+</div>
+<div class="paragraph">
+<p>Un <strong>template de recurso</strong> te permite crear un recurso de Kubernetes y esperar a que cumpla con una condición (por ejemplo, exitoso). Esto es útil si deseas interoperar con otro sistema de Kubernetes, como AWS Spark EMR.</p>
+</div>
+<div class="paragraph">
+<p>Un <strong>template de script</strong> te permite ejecutar un script en un contenedor. Esto es muy similar a un template de contenedor, pero con un script añadido.</p>
+</div>
+<div class="paragraph">
+<p>Cada tipo de template que realiza un trabajo, lo hace ejecutando un pod. Puedes usar <code>kubectl</code> para ver estos pods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>get<span class="tok-w"> </span>pods<span class="tok-w"> </span>-l<span class="tok-w"> </span>workflows.argoproj.io/workflow</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Puedes identificar los pods de workflow por la etiqueta <code>workflows.argoproj.io/workflow</code>.</p>
+</div>
+<div class="paragraph">
+<p>Deberías ver algo como esto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>NAME                 READY   STATUS      RESTARTS   AGE
+container-9br6p      0/2     Completed   0          115m
+hello                0/2     Completed   0          17h
+hello-work           0/2     Completed   0          16h
+template-tag-jnfzc   0/2     Completed   0          79m</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_template_dag">4.4. Template DAG</h3>
+<div class="paragraph">
+<p>Un template DAG es un tipo común de template de orquestación. Veamos un ejemplo completo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">apiVersion</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="tok-nt">kind</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Workflow</span>
+<span class="tok-nt">metadata</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">generateName</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">dag-</span>
+<span class="tok-nt">spec</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">entrypoint</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">  </span><span class="tok-nt">templates</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">      </span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">a</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">b</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">            </span><span class="tok-nt">dependencies</span><span class="tok-p">:</span>
+<span class="tok-w">              </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">a</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;hello</span><span class="tok-nv"> </span><span class="tok-s">world&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>En este ejemplo, tenemos dos templates:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>El template "main" es nuestro nuevo DAG.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>El template "whalesay" es el mismo que en el ejemplo de contenedor.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>El DAG tiene dos tareas: "a" y "b". Ambas ejecutan el template "whalesay", pero como "b" depende de "a", no comenzará hasta que "a" haya completado exitosamente.</p>
+</div>
+<div class="paragraph">
+<p>Ejecutemos el workflow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>--serviceaccount<span class="tok-w"> </span>argo<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/5_dag_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver algo como esto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP          TEMPLATE  PODNAME                       DURATION  MESSAGE
+ ✔ dag-whm2j  main
+ ├─✔ a        whalesay  dag-whm2j-whalesay-660405645  4s
+ └─✔ b        whalesay  dag-whm2j-whalesay-610072788  5s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>¿Notaste cómo "b" no comenzó hasta que "a" completó?</p>
+</div>
+<div class="paragraph">
+<p>Abre la pestaña del Servidor Argo (<a href="http://localhost:2746" target="_blank" rel="noopener">Ir</a>) y navega al workflow, deberías ver dos contenedores.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/dag_ui.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 5. DAG Workflow</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bucles_loops">4.5. Bucles (Loops)</h3>
+<div class="paragraph">
+<p>La capacidad de ejecutar trabajos de procesamiento paralelo en gran escala es una de las características clave de Argo Workflows. Veamos cómo utilizar los bucles para esto.</p>
+</div>
+<div class="sect3">
+<h4 id="_withitems">4.5.1. withItems</h4>
+<div class="paragraph">
+<p>Un DAG te permite iterar sobre una serie de elementos utilizando <code>withItems</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-w">      </span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">print-message</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">            </span><span class="tok-nt">arguments</span><span class="tok-p">:</span>
+<span class="tok-w">              </span><span class="tok-nt">parameters</span><span class="tok-p">:</span>
+<span class="tok-w">                </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">message</span>
+<span class="tok-w">                  </span><span class="tok-nt">value</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s">&quot;{{item}}&quot;</span>
+<span class="tok-w">            </span><span class="tok-nt">withItems</span><span class="tok-p">:</span>
+<span class="tok-w">              </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-s">&quot;hello</span><span class="tok-nv"> </span><span class="tok-s">world&quot;</span>
+<span class="tok-w">              </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-s">&quot;ciao</span><span class="tok-nv"> </span><span class="tok-s">mondo&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>En este ejemplo, se ejecutará una vez por cada uno de los elementos listados. Aquí podemos ver una etiqueta de template. <code>{{item}}</code> será reemplazada por "hello world" y "ciao mondo". Los DAGs se ejecutan en paralelo, así que ambas tareas se iniciarán al mismo tiempo.</p>
+</div>
+<div class="paragraph">
+<p>Ejecuta el workflow:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/6_with_items_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver algo como esto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                               TEMPLATE  PODNAME                               DURATION  MESSAGE
+ ✔ with-items-49mjs                main
+ ├─✔ print-message(0:hello world)  whalesay  with-items-49mjs-whalesay-1503367336  4s
+ └─✔ print-message(1:ciao mondo)   whalesay  with-items-49mjs-whalesay-1791799948  5s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Observa cómo los dos elementos se ejecutaron al mismo tiempo.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_withsequence">4.5.2. withSequence</h4>
+<div class="paragraph">
+<p>También puedes iterar sobre una secuencia de números utilizando <code>withSequence</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-w">      </span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">print-message</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">            </span><span class="tok-nt">arguments</span><span class="tok-p">:</span>
+<span class="tok-w">              </span><span class="tok-nt">parameters</span><span class="tok-p">:</span>
+<span class="tok-w">                </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">message</span>
+<span class="tok-w">                  </span><span class="tok-nt">value</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s">&quot;{{item}}&quot;</span>
+<span class="tok-w">            </span><span class="tok-nt">withSequence</span><span class="tok-p">:</span>
+<span class="tok-w">              </span><span class="tok-nt">count</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">4</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Como de costumbre, ejecútalo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/7_with_sequence_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver algo como esto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                     TEMPLATE  PODNAME                                  DURATION  MESSAGE
+ ✔ with-sequence-tnm67   main
+ ├─✔ print-message(0:0)  whalesay  with-sequence-tnm67-whalesay-1551215270  6s
+ ├─✔ print-message(1:1)  whalesay  with-sequence-tnm67-whalesay-2190561570  5s
+ ├─✔ print-message(2:2)  whalesay  with-sequence-tnm67-whalesay-1568889174  8s
+ └─✔ print-message(3:3)  whalesay  with-sequence-tnm67-whalesay-1540049194  7s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Observa cómo se ejecutaron 5 pods al mismo tiempo y que sus nombres incluyen el valor del ítem, indexado desde cero.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/with_sequence_ui.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 6. WitSequence Workflow</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_templates_de_orquestación">4.6. Templates de Orquestación</h3>
+<div class="paragraph">
+<p>Hemos aprendido que un <strong>template DAG</strong> es un tipo de template de orquestación. ¿Qué otros tipos de templates de orquestación existen?</p>
+</div>
+<div class="paragraph">
+<p>Los <strong>Steps template</strong> te permite ejecutar una serie de pasos en secuencia.</p>
+</div>
+<div class="paragraph">
+<p>Los <strong>suspend template</strong> te permite suspender automáticamente un workflow, por ejemplo, mientras se espera una aprobación manual o mientras un sistema externo realiza algún trabajo.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manejador_de_salida">4.7. Manejador de Salida</h3>
+<div class="paragraph">
+<p>Si necesitas realizar una tarea después de que algo haya terminado, puedes utilizar un manejador de salida. Los manejadores de salida se especifican usando <code>onExit</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-w">      </span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">a</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">            </span><span class="tok-nt">onExit</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">tidy-up</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Simplemente indica el nombre del template que debe ejecutarse al finalizar.</p>
+</div>
+<div class="paragraph">
+<p>Veamos un ejemplo completo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>cat<span class="tok-w"> </span>examples/8_exit_handler_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ejecútalo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/8_exit_handler_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                   TEMPLATE  PODNAME                                DURATION  MESSAGE
+ ✔ exit-handler-7mq52  main
+ ├─✔ a                 whalesay  exit-handler-7mq52-whalesay-970555148  4s
+ └─✔ a.onExit          tidy-up   exit-handler-7mq52-tidy-up-3394673695  5s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Se puede utilizar varios manejadores de salida en un solo template, y un manejador global de salida para todo el workflow.
+por ejemplo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-w">  </span><span class="tok-nt">entrypoint</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">  </span><span class="tok-nt">onExit</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">global-cleanup</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">  </span><span class="tok-nt">templates</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">      </span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">step-one</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">primary-action</span>
+<span class="tok-w">            </span><span class="tok-nt">onExit</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">cleanup-after-step-one</span><span class="tok-w">  </span><i class="conum" data-value="2"></i><b>(2)</b>
+
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">step-two</span>
+<span class="tok-w">            </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">secondary-action</span>
+<span class="tok-w">            </span><span class="tok-nt">dependencies</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">step-one</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">            </span><span class="tok-nt">onExit</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">cleanup-after-step-two</span><span class="tok-w">  </span><i class="conum" data-value="3"></i><b>(3)</b>
+
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">primary-action</span>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;Doing</span><span class="tok-nv"> </span><span class="tok-s">primary</span><span class="tok-nv"> </span><span class="tok-s">action&quot;</span><span class="tok-p tok-p-Indicator">]</span>
+
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">secondary-action</span>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;Doing</span><span class="tok-nv"> </span><span class="tok-s">secondary</span><span class="tok-nv"> </span><span class="tok-s">action&quot;</span><span class="tok-p tok-p-Indicator">]</span>
+
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">cleanup-after-step-one</span>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;Cleanup</span><span class="tok-nv"> </span><span class="tok-s">after</span><span class="tok-nv"> </span><span class="tok-s">step</span><span class="tok-nv"> </span><span class="tok-s">one&quot;</span><span class="tok-p tok-p-Indicator">]</span>
+
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">cleanup-after-step-two</span>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;Cleanup</span><span class="tok-nv"> </span><span class="tok-s">after</span><span class="tok-nv"> </span><span class="tok-s">step</span><span class="tok-nv"> </span><span class="tok-s">two&quot;</span><span class="tok-p tok-p-Indicator">]</span>
+
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">global-cleanup</span>
+<span class="tok-w">      </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">        </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">        </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;Performing</span><span class="tok-nv"> </span><span class="tok-s">global</span><span class="tok-nv"> </span><span class="tok-s">cleanup&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Este manejador se ejecuta cuando todo el workflow finaliza o falla.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Manejador de salida específico para esta tarea.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Otro manejador de salida específico para esta segunda tarea.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Ejecútalo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/9_exit_multi_handler_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/multi_exit_handler_ui.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 7. Multiple Exit Handler Workflow</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_entradas_y_salidas">5. Entradas y Salidas</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_parámetros">5.1. Parámetros</h3>
+<div class="paragraph">
+<p>Los parámetros son un tipo de entrada o salida que consisten en valores de texto simples. A diferencia de los artefactos, que pueden ser archivos o conjuntos de datos complejos, los parámetros son ideales para transmitir información sencilla y directa a lo largo de un workflow.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parámetros_de_entrada">5.2. Parámetros de Entrada</h3>
+<div class="paragraph">
+<p>Veamos un ejemplo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">  </span><span class="tok-nt">inputs</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">parameters</span><span class="tok-p">:</span>
+<span class="tok-w">      </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">message</span>
+<span class="tok-w">  </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">    </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">cowsay</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">    </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;{{inputs.parameters.message}}&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Este template declara que tiene un parámetro de entrada llamado "message".</p>
+</div>
+<div class="paragraph">
+<p>Ve el workflow completo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>cat<span class="tok-w"> </span>examples/10_input_parameters_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Observa cómo el propio workflow tiene argumentos.</p>
+</div>
+<div class="paragraph">
+<p>Ejecútalo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/10_input_parameters_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                       TEMPLATE  PODNAME                 DURATION  MESSAGE
+ ✔ input-parameters-pxrmj  main      input-parameters-pxrmj  7s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si un workflow tiene parámetros, puedes cambiar los parámetros usando <code>-p</code> con la CLI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/10_input_parameters_workflow.yaml<span class="tok-w"> </span>-p<span class="tok-w"> </span><span class="tok-nv">message</span><span class="tok-o">=</span><span class="tok-s1">&#39;¡Bienvenido a Argo!&#39;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                       TEMPLATE  PODNAME                 DURATION  MESSAGE
+ ✔ input-parameters-qg452  main      input-parameters-qg452  11s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Revisa la salida en los logs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>logs<span class="tok-w"> </span>@latest</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>:  ______________________
+: &lt; ¡Bienvenido a Argo! &gt;
+:  ----------------------
+:    \               ##         .
+:     \        ## ## ##        ==
+:           ## ## ## ##       ===
+:        /&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;\___/ ===
+:   ~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~
+:        \______ o          __/
+:          \    \        __/
+:           \____\______/
+: time=&quot;2024-05-04T21:43:14.087Z&quot; level=info msg=&quot;sub-process exited&quot; argo=true error=&quot;&lt;nil&gt;&quot;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parámetros_de_salida">5.3. Parámetros de Salida</h3>
+<div class="paragraph">
+<p>Los parámetros de salida pueden provenir de varios lugares, pero típicamente el más versátil es de un archivo. En este ejemplo, el contenedor crea un archivo con un mensaje en él:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">  </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">    </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">sh</span><span class="tok-p tok-p-Indicator">,</span><span class="tok-w"> </span><span class="tok-nv">-c</span><span class="tok-p tok-p-Indicator">]</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">//</span>
+<span class="tok-w">    </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;echo</span><span class="tok-nv"> </span><span class="tok-s">-n</span><span class="tok-nv"> </span><span class="tok-s">hello</span><span class="tok-nv"> </span><span class="tok-s">world</span><span class="tok-nv"> </span><span class="tok-s">&gt;</span><span class="tok-nv"> </span><span class="tok-s">/tmp/hello_world.txt&quot;</span><span class="tok-p tok-p-Indicator">]</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">  </span><span class="tok-nt">outputs</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">parameters</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">hello-param</span>
+<span class="tok-w">      </span><span class="tok-nt">valueFrom</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">path</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/tmp/hello_world.txt</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Crea un archivo con un mensaje.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Referencia al archivo creado.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>En los templates de tipo DAG y de pasos (steps), es posible utilizar las salidas de una tarea como entradas para otra tarea, mediante el uso de etiquetas de template. Esto facilita la interconexión y dependencia directa entre tareas dentro del workflow.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">generate-parameter</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">      </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">whalesay</span>
+<span class="tok-w">    </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">consume-parameter</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tok-w">      </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">print-message</span>
+<span class="tok-w">      </span><span class="tok-nt">dependencies</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">generate-parameter</span>
+<span class="tok-w">      </span><span class="tok-nt">arguments</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">parameters</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">message</span>
+<span class="tok-w">            </span><span class="tok-nt">value</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s">&quot;{{tasks.generate-parameter.outputs.parameters.hello-param}}&quot;</span><span class="tok-w"> </span><i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>La tarea que genera el parámetro.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>La tarea que consume el parámetro.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>El valor del parámetro generado.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Ve el workflow completo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>cat<span class="tok-w"> </span>examples/11_output_parameters_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ejecútalo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/11_output_parameters_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                     TEMPLATE       PODNAME                                   DURATION  MESSAGE
+ ✔ parameters-t64zg      main
+ ├─✔ generate-parameter  whalesay       parameters-t64zg-whalesay-2318848988      5s
+ └─✔ consume-parameter   print-message  parameters-t64zg-print-message-796340527  4s</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Lectura recomendada</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/walk-through/parameters/" target="_blank" rel="noopener">Parámetros</a></p>
+</li>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/workflow-inputs/" target="_blank" rel="noopener">Parámetros de Entrada</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_artefactos">5.4. Artefactos</h3>
+<div class="paragraph">
+<p>Un artefacto es simplemente un archivo que se comprime y almacena en un almacenamiento de objetos (como <a href="https://aws.amazon.com/es/s3/" target="_blank" rel="noopener">S3</a>, <a href="https://min.io" target="_blank" rel="noopener">MinIO</a>, <a href="https://cloud.google.com/storage?hl=es_419" target="_blank" rel="noopener">GCS</a>, etc.).</p>
+</div>
+<div class="paragraph">
+<p>En Argo, hay dos tipos de artefactos:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Un <strong>artefacto de entrada</strong> es un archivo descargado desde el almacenamiento (p. ej., S3) y montado como un volumen dentro del contenedor.</p>
+</li>
+<li>
+<p>Un <strong>artefacto de salida</strong> es un archivo creado en el contenedor que luego se sube al almacenamiento.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Los artefactos generalmente se cargan en un bucket dentro de algún tipo de almacenamiento como AWS S3 o GCP GCS. Llamamos a este almacenamiento un repositorio de artefactos. En este laboratorio usaremos MinIO.</p>
+</div>
+<div class="sect3">
+<h4 id="_artefactos_de_salida">5.4.1. Artefactos de Salida</h4>
+<div class="paragraph">
+<p>Cada tarea dentro de un workflow puede producir artefactos de salida. Para especificar un artefacto de salida, debes incluir <code>outputs</code> en el manifiesto. Cada artefacto de salida declara:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">save-message</span>
+<span class="tok-w">  </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoina/whalesay</span>
+<span class="tok-w">    </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">sh</span><span class="tok-p tok-p-Indicator">,</span><span class="tok-w"> </span><span class="tok-nv">-c</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">    </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;cowsay</span><span class="tok-nv"> </span><span class="tok-s">hello</span><span class="tok-nv"> </span><span class="tok-s">world</span><span class="tok-nv"> </span><span class="tok-s">&gt;</span><span class="tok-nv"> </span><span class="tok-s">/tmp/hello_world.txt&quot;</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">  </span><span class="tok-nt">outputs</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">artifacts</span><span class="tok-p">:</span>
+<span class="tok-w">      </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">hello-art</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">        </span><span class="tok-nt">path</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/tmp/hello_world.txt</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>La ruta dentro del contenedor donde se puede encontrar.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Un nombre para poder referenciarlo.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Cuando el contenedor se completa, el archivo se copia fuera de él, se comprime y se almacena.</p>
+</div>
+<div class="paragraph">
+<p>Los archivos también pueden ser directorios, por lo que cuando se encuentra un directorio, todos los archivos se comprimen en un archivo y se almacenan.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_artefactos_de_entrada">5.4.2. Artefactos de Entrada</h4>
+<div class="paragraph">
+<p>Para declarar un artefacto de entrada, debes incluir <code>inputs</code> en el manifiesto. Cada artefacto de entrada debe declarar:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">print-message</span>
+<span class="tok-w">  </span><span class="tok-nt">inputs</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">artifacts</span><span class="tok-p">:</span>
+<span class="tok-w">      </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">message</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">        </span><span class="tok-nt">path</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/tmp/message</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tok-w">  </span><span class="tok-nt">container</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">image</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wmoinar/whalesay</span>
+<span class="tok-w">    </span><span class="tok-nt">command</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">sh</span><span class="tok-p tok-p-Indicator">,</span><span class="tok-w"> </span><span class="tok-nv">-c</span><span class="tok-p tok-p-Indicator">]</span>
+<span class="tok-w">    </span><span class="tok-nt">args</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p tok-p-Indicator">[</span><span class="tok-s">&quot;cat</span><span class="tok-nv"> </span><span class="tok-s">/tmp/message&quot;</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Su nombre.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>La ruta donde debe ser creado.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Si el artefacto era un directorio comprimido, se descomprimirá y desempaquetará en la ruta especificada.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_entradas_y_salidas_artefactos">5.4.3. Entradas y Salidas (artefactos)</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Para ejecutar este ejemplo necesitaremos instalar MinIO. Sigue las instrucciones en la sección de <a href="#prerequisites">Argo-Events.Prerrequisitos</a>.</p>
+</li>
+<li>
+<p>Asegúrate de que MinIO esté instalado y funcionando antes de continuar.</p>
+</li>
+<li>
+<p>Crear un bucket llamado <code>argo-artifacts</code> en MinIO.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>No puedes usar entradas y salidas de forma aislada; necesitas combinarlas utilizando un template de pasos o DAG, como en el siguiente ejemplo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">main</span>
+<span class="tok-w">  </span><span class="tok-nt">dag</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">tasks</span><span class="tok-p">:</span>
+<span class="tok-w">      </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">generate-artifact</span>
+<span class="tok-w">        </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">save-message</span>
+<span class="tok-w">      </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">consume-artifact</span>
+<span class="tok-w">        </span><span class="tok-nt">template</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">print-message</span>
+<span class="tok-w">        </span><span class="tok-nt">dependencies</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">generate-artifact</span>
+<span class="tok-w">        </span><span class="tok-nt">arguments</span><span class="tok-p">:</span>
+<span class="tok-w">          </span><span class="tok-nt">artifacts</span><span class="tok-p">:</span>
+<span class="tok-w">            </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">message</span>
+<span class="tok-w">              </span><span class="tok-nt">from</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s">&quot;{{tasks.generate-artifact.outputs.artifacts.hello-art}}&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>En el ejemplo anterior, <code>arguments</code> se usa para declarar el valor de la entrada del artefacto. Esto utiliza una etiqueta de template. En este ejemplo, <code>{{tasks.generate-artifact.outputs.artifacts.hello-art}}</code> se convierte en la ruta del artefacto en el repositorio.</p>
+</div>
+<div class="paragraph">
+<p>La tarea <code>consume-artifact</code> debe ejecutarse después de <code>generate-artifact</code>, por lo que usamos <code>dependencies</code> para declarar esa relación.</p>
+</div>
+<div class="paragraph">
+<p>Veamos el workflow DAG completo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>cat<span class="tok-w"> </span>examples/12_artifacts_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ejecutemos un ejemplo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>argo<span class="tok-w"> </span>submit<span class="tok-w"> </span>--watch<span class="tok-w"> </span>examples/12_artifacts_workflow.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deberías ver:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text"><span></span>STEP                    TEMPLATE       PODNAME                     DURATION  MESSAGE
+ ✔ artifacts-qvcpn      main
+ ├─✔ generate-artifact  save-message   artifacts-qvcpn-3260493969  7s
+ └─✔ consume-artifact   print-message  artifacts-qvcpn-2991781604  8s</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Lectura recomendada</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/walk-through/artifacts/" target="_blank" rel="noopener">Artifacts overview</a></p>
+</li>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/configure-artifact-repository/" target="_blank" rel="noopener">Configuring an artifact repository</a></p>
+</li>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/key-only-artifacts/" target="_blank" rel="noopener">Key-only artifacts</a></p>
+</li>
+<li>
+<p><a href="https://argo-workflows.readthedocs.io/en/latest/artifact-repository-ref/" target="_blank" rel="noopener">Referencing artifact repositories</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_argo_events">6. Argo Events</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="prerequisites">6.1. Prerequisitos</h3>
+<div class="paragraph">
+<p>Para ejecutar los ejemplos de Argo Events, primero necesitas tener Minio instalado. Puedes seguir la guía oficial de Minio en el siguiente enlace: <a href="https://min.io/docs/minio/kubernetes/upstream/index.html" target="_blank" rel="noopener">Guía de inicio rápido de Minio</a>, o puedes usar el siguiente comando para instalar Minio en tu clúster de Minikube:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/minio.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para verificar que Minio se ha instalado correctamente, ejecuta el siguiente comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span><span class="tok-nb">wait</span><span class="tok-w"> </span>deploy<span class="tok-w"> </span>minio<span class="tok-w"> </span>--for<span class="tok-w"> </span><span class="tok-nv">condition</span><span class="tok-o">=</span>Available<span class="tok-w"> </span>--timeout<span class="tok-w"> </span>2m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dar acceso a Minio para almacenar artefactos de Argo Events:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/minio_artifacts.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Después de aplicar las configuraciones, reinicia el controlador de workflows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>rollout<span class="tok-w"> </span>restart<span class="tok-w"> </span>deployment<span class="tok-w"> </span>workflow-controller<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conecta_tu_navegador_al_servidor_minio">6.2. Conecta tu Navegador al Servidor MinIO</h3>
+<div class="paragraph">
+<p>Para acceder a la interfaz de Minio, crea un reenvío de puerto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo<span class="tok-w"> </span>port-forward<span class="tok-w"> </span>--address<span class="tok-w"> </span><span class="tok-m">0</span>.0.0.0<span class="tok-w"> </span>svc/minio<span class="tok-w"> </span><span class="tok-m">9001</span>:9001<span class="tok-w">  </span>&gt;<span class="tok-w"> </span>/dev/null<span class="tok-w"> </span><span class="tok-p">&amp;</span><span class="tok-w"> </span><span class="tok-c1">#</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Accede a la Consola de MinIO abriendo un navegador en la máquina local y navegando a <a href="http://127.0.0.1:9001" target="_blank" rel="noopener">http://127.0.0.1:9001</a>. Inicia sesión en la Consola con las credenciales <code>argoproj</code> | <code>UVseminario24</code>. Estas son las credenciales predeterminadas del usuario raíz.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/minio.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 8. Minio Dashboard</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_instalar_y_configurar_argo_events">6.3. Instalar y Configurar Argo Events</h3>
+<div class="paragraph">
+<p>Argo Events normalmente se instala en un espacio de nombres llamado argo-events, así que vamos a crearlo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>create<span class="tok-w"> </span>ns<span class="tok-w"> </span>argo-events</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A continuación, dirígete a la página de versiones y encuentra la versión que deseas usar (se prefiere la última versión completa).</p>
+</div>
+<div class="paragraph">
+<p>A continuación, un ejemplo del comando de instalación:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>-f<span class="tok-w"> </span>https://github.com/argoproj/argo-events/releases/download/v1.9.1/install.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Argo Events también requiere la creación de un eventbus. Este es un punto central al que se envían todos los eventos. El eventbus se crea en el mismo espacio de nombres que el controlador de Argo Events.</p>
+</div>
+<div class="paragraph">
+<p>Hay un ejemplo disponible en el repositorio de GitHub de Argo Events. Ejecuta el siguiente comando para crear el eventbus:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>-f<span class="tok-w"> </span>https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/eventbus/native.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Queremos que Argo Events active un flujo de trabajo cuando se agregue un archivo a Minio. Para lograr esto, agregaremos un eventsource de Minio que escuchará los eventos de Minio.</p>
+</div>
+<div class="paragraph">
+<p>El eventsource requerirá credenciales de Minio. Proporcionaremos estas credenciales en forma de un secreto. Visualiza el secreto con:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>cat<span class="tok-w"> </span>examples/minio_secret.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Implementa el secreto con:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/minio_secret.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Antes de implementar el eventsource, necesitamos crear un bucket en Minio. Puedes hacerlo desde la interfaz, utiliza el nombre <code>argoproj</code>.</p>
+</div>
+<div class="paragraph">
+<p>Una vez que hayas creado el bucket, visualiza el eventsource con:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">apiVersion</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argoproj.io/v1alpha1</span>
+<span class="tok-nt">kind</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">EventSource</span>
+<span class="tok-nt">metadata</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">minio</span>
+<span class="tok-w">  </span><span class="tok-nt">namespace</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argo-events</span>
+<span class="tok-nt">spec</span><span class="tok-p">:</span>
+<span class="tok-w">  </span><span class="tok-nt">minio</span><span class="tok-p">:</span>
+<span class="tok-w">    </span><span class="tok-nt">example</span><span class="tok-p">:</span>
+<span class="tok-w">      </span><span class="tok-nt">bucket</span><span class="tok-p">:</span>
+<span class="tok-w">        </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">argoproj</span><span class="tok-w"> </span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tok-w">      </span><span class="tok-nt">endpoint</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">minio.argo:9000</span><span class="tok-w"> </span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="tok-w">      </span><span class="tok-nt">events</span><span class="tok-p">:</span><span class="tok-w"> </span><i class="conum" data-value="3"></i><b>(3)</b>
+<span class="tok-w">        </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">s3:ObjectCreated:Put</span>
+<span class="tok-w">        </span><span class="tok-p tok-p-Indicator">-</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">s3:ObjectRemoved:DeleteMarkerCreated</span>
+
+<span class="tok-w">      </span><span class="tok-nt">insecure</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">true</span><span class="tok-w"> </span><i class="conum" data-value="4"></i><b>(4)</b>
+<span class="tok-w">      </span><span class="tok-nt">accessKey</span><span class="tok-p">:</span><span class="tok-w"> </span><i class="conum" data-value="5"></i><b>(5)</b>
+<span class="tok-w">        </span><span class="tok-nt">key</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">accesskey</span>
+<span class="tok-w">        </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">minio-creds</span>
+<span class="tok-w">      </span><span class="tok-nt">secretKey</span><span class="tok-p">:</span><span class="tok-w"> </span><i class="conum" data-value="6"></i><b>(6)</b>
+<span class="tok-w">        </span><span class="tok-nt">key</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">secretkey</span>
+<span class="tok-w">        </span><span class="tok-nt">name</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">minio-creds</span></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Nombre del bucket</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Punto de conexión del servicio S3</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Lista de eventos a los que suscribirse. Visita <a href="https://docs.minio.io/docs/minio-bucket-notification-guide.html" class="bare">https://docs.minio.io/docs/minio-bucket-notification-guide.html</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Tipo de conexión</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Clave dentro del secreto de K8s que almacena la clave de acceso</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Clave dentro del secreto de K8s que almacena la clave secreta</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Implementa el eventsource con:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/minio_eventsource.yaml</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_qué_se_instaló">6.3.1. ¿Qué se instaló?</h4>
+<div class="paragraph">
+<p>Puede tardar aproximadamente 1 minuto en que todas las implementaciones estén disponibles. Veamos qué se instaló mientras esperamos.</p>
+</div>
+<div class="paragraph">
+<p>El Gestor de Controladores de Eventos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>get<span class="tok-w"> </span>deploy<span class="tok-w"> </span>controller-manager</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Un estado de eventbus statefulset:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>get<span class="tok-w"> </span>statefulsets<span class="tok-w"> </span>eventbus-default-stan</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Un pod de eventsource de Minio:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>get<span class="tok-w"> </span>pod<span class="tok-w"> </span>-l<span class="tok-w"> </span>eventsource-name<span class="tok-o">=</span>minio</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_agregar_un_sensor_y_disparador_de_minio">6.4. Agregar un Sensor y Disparador de Minio</h3>
+<div class="paragraph">
+<p>Necesitamos instalar un Sensor que sea llamado por el EventSource. El Sensor es responsable de activar la creación de un flujo de trabajo cuando se recibe un evento. Veamos la configuración del Sensor:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>cat<span class="tok-w"> </span>examples/minio_sensor.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Despliega con el siguiente comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/minio_sensor.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Esto crea finalmente un pod en nuestro espacio de nombres <code>argo-events</code> que es responsable de activar flujos de trabajo cuando se reciben eventos.</p>
+</div>
+<div class="paragraph">
+<p>"This service account does not have permission to create workflows in the argo namespace. We therefore need to give it permission to do so."</p>
+</div>
+<div class="paragraph">
+<p>Necesitamos ortorgar permisos a la cuenta de servicio <code>default</code> para crear workflows. Para hacer esto, necesitamos crear un <code>ClusterRole</code> y un <code>ClusterRoleBinding</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>apply<span class="tok-w"> </span>-f<span class="tok-w"> </span>examples/minio_sa.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Podemos ver que está configurado para observar el bucket de Minio llamado <code>argoproj</code>. Si creamos o eliminamos un archivo en este bucket, se activará un evento.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_crear_un_flujo_de_trabajo">6.5. Crear un Flujo de Trabajo</h3>
+<div class="paragraph">
+<p>Cargamos un archivo en el bucket <code>argoproj</code> en Minio. Puedes hacerlo desde la interfaz de Minio:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/img-test.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 9. Carga de Archivo</div>
+</div>
+<div class="paragraph">
+<p>Esto debería activar un evento en el EventSource de Minio. El Sensor debería detectar este evento y activar un workflow.</p>
+</div>
+<div class="paragraph">
+<p>Veamos los registros del pod del sensor:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>kubectl<span class="tok-w"> </span>-n<span class="tok-w"> </span>argo-events<span class="tok-w"> </span>logs<span class="tok-w"> </span>-l<span class="tok-w"> </span>sensor-name<span class="tok-o">=</span>minio</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="json"><span></span><span class="tok-p">{</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;level&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;info&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;ts&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-mf">1715524387.6334236</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;logger&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;argo-events.sensor&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;caller&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;sensors/listener.go:433&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;msg&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;Successfully processed trigger &#39;minio-workflow-trigger&#39;&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;sensorName&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;minio&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;triggerName&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;minio-workflow-trigger&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;triggerType&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-s2">&quot;Kubernetes&quot;</span><span class="tok-p">,</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;triggeredBy&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p">[</span>
+<span class="tok-w">    </span><span class="tok-s2">&quot;example-dep&quot;</span>
+<span class="tok-w">  </span><span class="tok-p">],</span>
+<span class="tok-w">  </span><span class="tok-nt">&quot;triggeredByEvents&quot;</span><span class="tok-p">:</span><span class="tok-w"> </span><span class="tok-p">[</span>
+<span class="tok-w">    </span><span class="tok-s2">&quot;31336131313836312d313362342d343766662d613663332d633336303932623961643035&quot;</span>
+<span class="tok-w">  </span><span class="tok-p">]</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Si todo ha ido bien hasta ahora, deberías ver un mensaje similar al anterior. Esto indica que el Sensor ha detectado un evento y ha activado un flujo de trabajo.</p>
+</div>
+<div class="paragraph">
+<p>Desde la interfaz de Argo, puedes ver el flujo de trabajo activado:</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="images/argo_event.png" alt="ui" width="90%">
+</div>
+<div class="title">Figure 10. Argo UI</div>
+</div>
+<div class="sect3">
+<h4 id="_proceso_detallado">6.5.1. Proceso Detallado</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Evento en MinIO:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Un usuario sube un archivo a <code>my-bucket</code> en MinIO.</p>
+</li>
+<li>
+<p>MinIO genera un evento <code>s3:ObjectCreated:*</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Detección del Evento por el Event Source:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>El Event Source <code>minio-event-source</code> monitorea <code>argoproj</code> y detecta el evento de creación de objeto.</p>
+</li>
+<li>
+<p>El Event Source envía el evento al EventBus.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Transporte del Evento por el EventBus:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>El EventBus recibe el evento del Event Source y lo envía a los Sensors suscritos.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Activación del Sensor:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>El Sensor <code>minio-sensor</code> está suscrito a los eventos del Event Source <code>minio-event-source</code>.</p>
+</li>
+<li>
+<p>El Sensor recibe el evento y activa su trigger configurado.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Ejecución del Workflow en Argo Workflows:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>El trigger del Sensor somete un nuevo Workflow de Argo (<code>triggered-workflow</code>).</p>
+</li>
+<li>
+<p>El Workflow se ejecuta según la configuración definida, en este caso, imprime un mensaje usando la imagen <code>wmoinar/whalesay</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Diagrama del Flujo de Trabajo:</p>
+<div class="literalblock">
+<div class="content">
+<pre>MinIO (evento de creación de objeto) →</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Event Source (detecta el evento) →</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>EventBus (transporte del evento) →</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Sensor (recibe el evento y activa el trigger) →</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>Argo Workflows (ejecuta el workflow).</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusiones">7. Conclusiones</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>En este laboratorio, hemos explorado los conceptos fundamentales y la configuración básica de Argo Workflows, una poderosa herramienta de orquestación de flujos de trabajo para Kubernetes. A continuación, se resumen los puntos clave tratados:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Comprensión de Argo Workflows</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Argo Workflows es una herramienta nativa de Kubernetes que facilita la creación y gestión de flujos de trabajo complejos.</p>
+</li>
+<li>
+<p>Permite la definición de tareas que se ejecutan en contenedores y su organización en estructuras secuenciales o paralelas.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Instalación y Configuración</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Instalamos Argo Workflows en un clúster de Kubernetes, asegurando que todos los componentes necesarios estuvieran en funcionamiento.</p>
+</li>
+<li>
+<p>Configuramos y verificamos la instalación para garantizar que el entorno esté listo para ejecutar flujos de trabajo.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Creación y Ejecución de Workflows</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Aprendimos a definir workflows en YAML, especificando tareas y sus relaciones mediante templates.</p>
+</li>
+<li>
+<p>Ejecutamos workflows utilizando tanto la CLI de Argo como la interfaz de usuario web, observando cómo se desarrollan y completan las tareas.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Tipos de Templates</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Exploramos diversos tipos de templates, incluyendo contenedores, scripts, y DAGs, que nos permiten modelar tareas de manera flexible y escalable.</p>
+</li>
+<li>
+<p>Entendimos cómo utilizar los templates de orquestación como DAG y Steps para estructurar flujos de trabajo complejos.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Argo Events</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Configuramos Argo Events para reaccionar a eventos externos, integrando MinIO como fuente de eventos.</p>
+</li>
+<li>
+<p>Implementamos Event Sources, EventBus y Sensors para detectar eventos en MinIO y desencadenar la ejecución de workflows en Argo.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Automatización y Escalabilidad</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Demostramos cómo Argo Workflows y Argo Events juntos pueden automatizar procesos en respuesta a eventos, mejorando la eficiencia y escalabilidad de las operaciones.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-05-15 11:46:49 +0200
+</div>
+</div>
+</body>
+</html>

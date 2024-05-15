@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: hello
+spec:
+  serviceAccountName: argo # Esta es la cuenta de servicio con la que se ejecutará el workflow
+  entrypoint: main # El primer template que se ejecutará en el workflow
+  templates:
+  - name: main
+    container: # Esta es una template de contenedor
+      image: wmoinar/whalesay # docker/whalesay| La imagen que se utilizará para ejecutar el contenedor
+      command: ["cowsay"] 
